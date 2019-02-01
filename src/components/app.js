@@ -26,7 +26,8 @@ export class App extends React.Component {
     startPeriodicRefresh() {
         this.refreshInterval = setInterval(
             () => this.props.dispatch(refreshAuthToken()),
-            60 * 60 * 1000 // One hour
+            10 * 60 * 1000 // refresh every 10 min
+
         );
     }
 
@@ -40,7 +41,7 @@ export class App extends React.Component {
 
     render() {
         return (
-            <div className="app">
+            <div onMouseMove={()=>console.log('hey')} className="app">
                 <HeaderBar />
                 <Route exact path="/" component={LandingPage} />
                 <Route exact path="/dashboard" component={Dashboard} />

@@ -2,15 +2,39 @@ import React from 'react';
 import {connect} from 'react-redux';
 import requiresLogin from './requires-login';
 import {fetchProtectedData} from '../actions/protected-data';
+import {clearAuth} from '../actions/auth';
+
 
 export class Dashboard extends React.Component {
     componentDidMount() {
         this.props.dispatch(fetchProtectedData());
+        this.startInactivityTimeout();
+      
+    }
+
+
+
+    startInactivityTimeout() {
+        this.timeoutInterval = setInterval(
+            () => this.props.dispatch(clearAuth()),
+            5 * 1000 
+            
+        );
+    }
+
+    activityhappened(){
+        console.log('clearinterval')
+        this.restartTimer = clearInterval(this.timeoutInterval)
+        this.timeoutInterval = setInterval(
+            () => this.props.dispatch(clearAuth()),
+            5 * 1000 
+            
+        );
     }
 
     render() {
         return (
-            <div className="dashboard">
+            <div onMouseMove={()=>this.activityhappened()} className="dashboard">
                 <div className="dashboard-username">
                     Username: {this.props.username}
                 </div>
