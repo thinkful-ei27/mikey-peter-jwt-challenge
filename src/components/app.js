@@ -6,7 +6,7 @@ import HeaderBar from './header-bar';
 import LandingPage from './landing-page';
 import Dashboard from './dashboard';
 import RegistrationPage from './registration-page';
-import {refreshAuthToken} from '../actions/auth';
+import {refreshAuthToken, clearAuth} from '../actions/auth';
 
 export class App extends React.Component {
     componentDidUpdate(prevProps) {
@@ -21,6 +21,33 @@ export class App extends React.Component {
 
     componentWillUnmount() {
         this.stopPeriodicRefresh();
+    }
+
+    componentDidMount() {
+        this.startInactivityTimeout();
+      
+    }
+
+    startInactivityTimeout() {
+        this.timeoutInterval = setInterval(
+            () => this.props.dispatch(clearAuth()),
+            1 * 60 * 1000 
+        );
+    }
+
+    alertInactiveUser () {
+        this.timeoutInterval = setInterval(() => 
+            alert('You will be logged after after 1 more minute of inactivity. Please press OK to continue'),
+                10 * 1000
+            );
+    }
+
+
+    activityhappened(){
+        console.log('clearinterval')
+        this.restartTimer = clearInterval(this.timeoutInterval)
+        this.startInactivityTimeout();
+        this.alertInactiveUser();
     }
 
     startPeriodicRefresh() {
@@ -39,9 +66,15 @@ export class App extends React.Component {
         clearInterval(this.refreshInterval);
     }
 
+   
+
     render() {
+        const style = {
+            height: '100%',
+            width: '100%'
+        }
         return (
-            <div onMouseMove={()=>console.log('hey')} className="app">
+            <div onMouseMove={()=> this.activityhappened()} className="app" style={style}>
                 <HeaderBar />
                 <Route exact path="/" component={LandingPage} />
                 <Route exact path="/dashboard" component={Dashboard} />
